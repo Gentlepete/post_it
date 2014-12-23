@@ -25,20 +25,26 @@ Formular zur Auswahl einer gesuchten Kategorie und eingeben eines Suchbegriffs
 <!-- 
 Formular zum Login eines Nutzers
 -->
-<form action="login.php" method="post">
+<?php if(!isset($_SESSION['logged'])){ ?>
     
-        
-        <span id="login_name">
-            <label>Username: </label>
-            <input name="username">
-        </span>
-        <span id="login_password">
-            <label>Passwort: </label>
-            <input type="password" name="password">
-        </span>
-        <span class="button">
-            <button type="submit" name="btn_login">Login</button>
-        </span>
-   
+<form action="login.php" method="post">   
+    <span id="login_name">
+        <label>Username: </label>
+        <input name="username" required>
+    </span>
+    <span id="login_password">
+        <label>Passwort: </label>
+        <input type="password" name="password" required>
+    </span>
+    
+    <span class="button">
+        <button type="submit" name="btn_send" value="login">Login</button>
+    </span> 
+    <span style="float: right;margin-right: 150px;" id="remember_me">
+        <label>Login speichern? </label>
+        <input type="checkbox" name="rememberMe" value="1">
+    </span>
 </form>
+
+<?php } ?>
 

@@ -2,34 +2,39 @@
 session_start();
 require_once 'functions.inc.php';
 
-
+// Dieser Block wird ausgeführt sobald das SignUp Formular abgeschickt wird
 if(isset($_POST['btn_send'])){
-    
-    if(isFormComplete()){
-        if(isMailValid(filter_input(INPUT_POST, 'email', FILTER_SANITIZE_STRING))){
-            
+    // Wenn Funktion zum Validieren ein True zurückgibt, wird der if-Block ausgeführt
+    if(validateForm()){
+        // Datenbankverbindung öffnen
+        $dbCon = getDbConnection('post_it');
+        
+        // Wenn die angegeben Nutzerdaten (name und email) noch nicht in der Db vorhanden sind,
+        // wird der If-Block ausgeführt
+        if(isUserNotInDb($dbCon)){
+               
+                // angegebens Passwort wird mit der Funktion password_hash verschlüsselt
+               $password = password_hash($dbCon->real_escape_string(htmlspecialchars($_POST['password'])), PASSWORD_DEFAULT);
+               
+               $name = $dbCon->real_escape_string(htmlspecialchars($_POST['username']));
+               $email = $dbCon->real_escape_string(htmlspecialchars($_POST['email']));
+               
+               $sqlQuery = "INSERT users (name, email, password)"
+                       . " VALUES ('$name', '$email', '$password')";
+               
+               if(sendSqlQuery($dbCon, $sqlQuery)){
+                   sendWelcomeMail($email);
+                   $_SESSION['notice'] = "<p style='color:green'>User erfolgreich angelegt!</p>";
+               }
         }else{
-            $_SESSION['error'] = "Bitte gib eine gültige E-Mail ein";
+            $_SESSION['error'] = "<p style='color:red'>Benutzername und/oder E-Mail bereits vergeben!</p>";
         }
-    }else{
-        $_SESSION['error'] = "Bitte fülle Das Formular komplett aus";
     }
     
 }
 
-
-
-
-
 ?>
-
-
 <!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
 <html>
     <head>
         <meta charset="UTF-8">
@@ -37,22 +42,18 @@ and open the template in the editor.
         <title>Registrieren</title>
     </head>
     <body>
-        <?php if(isset($_SESSION['error'])){ ?>
-        <div style="float:left; color:red;margin-top: -50px;" class="container_element">
-            <?php 
-            echo $_SESSION['error']; 
-            unset($_SESSION['error']);
-            ?>
-        </div>
-        <?php } ?>
+        <?php include_once 'flash_messages.php'; ?>
+        
         <div id="navigation" class="container_element">
            <?php include_once 'nav.php'; ?> 
         </div>
-        <div id="content" class="container_element">
+        <div id="head_menu" class="container_element">
             <h2>Registrierung</h2>
+        </div>
+        <div id="content" class="container_element">
             <form action="sign_up.php" method="post">
                 <fieldset>
-                    <legend>Bitte füllen Sie alle Formularfelder aus:</legend>
+                    <legend >Bitte füllen Sie alle Formularfelder aus:</legend>
                     <p>
                         <label>Username:</label><br>
                         <input name="username" required>
@@ -63,11 +64,11 @@ and open the template in the editor.
                     </p>
                     <p>
                         <label>Passwort:</label><br>
-                        <input name="password" required>
+                        <input type="password" name="password" required>
                     </p>
                     <p>
                         <label>Passwort wiederholen:</label><br>
-                        <input name="password2" required>
+                        <input type="password" name="password2" required>
                     </p>
                     <button type="submit" name="btn_send" value="sign_up">Registrieren</button>
                 </fieldset>

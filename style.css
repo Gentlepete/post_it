@@ -75,5 +75,26 @@ body > div {
     height: 2000px;
     
     
+    
+}
+
+.flash{
+    margin-top: -10px; 
+    position: fixed;
+    
+    box-shadow: 5px 5px 5px #596c24;
+    left: 20px;
+}
+
+
+#error{
+    
+    color:red;
+    border: 1px solid red;
+}
+
+#notice{
+    color:green;
+    border: 1px solid green;
 }
 
