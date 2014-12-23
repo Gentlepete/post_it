@@ -8,6 +8,8 @@ if(isset($_COOKIE['rememberMeToken']) && isset($_COOKIE['rememberMe']) && !isset
     }
 }
 
+
+
 ?>
 <!DOCTYPE html>
 <!--
@@ -29,6 +31,7 @@ and open the template in the editor.
         <div id="head_menu" class="container_element">
             <?php include_once 'head.php'; ?>
         </div>
+        
         <div id="content" class="container_element">
             
         </div>
