@@ -3,25 +3,21 @@
 Formular zur Auswahl einer gesuchten Kategorie und eingeben eines Suchbegriffs
 -->
 <form style="float: left;" action="index.php" method="get">
-    
-        
-        <span id="category_list">
-            <select name="category">
-                <option value="" disabled selected>Kategorie auswählen</option>
-                <option value="politik">Politik</option>
-                <option value="wissenschaft">Wissenschaft</option>
-                <option value="fun">Fun</option>
-                <option value="unnuetzes wissen">Unnützes Wissen</option>
-            </select>
-        </span>
-        <span id="search">
-            <label>Suche: </label>
-            <input type="text" name="search">
-        </span>
-        <span class="button">
-            <button type="submit" name="btn_search">Suchen</button>
-        </span>
-
+    <span id="category_list">
+        <select name="category">
+            <option value="" disabled selected>Kategorie auswählen</option>
+            <?php while($cat = $categories_search->fetch_assoc()){ ?>
+                <option value="<?php echo $cat['id']; ?>"><?php echo $cat['name']; ?></option>
+            <?php } ?>
+        </select>
+    </span>
+    <span id="search">
+        <label>Suche: </label>
+        <input type="text" name="search">
+    </span>
+    <span class="button">
+        <button type="submit" name="btn_search">Suchen</button>
+    </span>
 </form>
 <!-- 
 Formular zum Login eines Nutzers

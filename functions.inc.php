@@ -60,10 +60,11 @@ function isFormComplete()
         // mit der funktion trim entfernen wir alle whitespaces am anfang und 
         // am ende eines strings 
         $v = trim($v);
-        if(empty($v))
+        if(empty($v) || $v == 'default')
         {
             return false;
         }
+        
     }
     return true;
 }
@@ -214,4 +215,37 @@ function loginUser(&$ref_userId, &$ref_userData)
     $_SESSION['userId'] = $ref_userId;
     
     return true;
+}
+
+function timeDiff($timestamp){
+    
+    $now = time();
+    $diff = $now - $timestamp;
+    $string = NULL;
+    
+    switch (true){
+    
+//      Wenn der Post weniger als eine Minute her ist.
+        case $diff < 60:
+            $string = "Vor weniger als einer Minute";
+            break;
+//      Wenn der Post weniger als eine Stunde her ist.
+        case $diff < 3600:
+            $string = "Vor ".(floor($diff / 60))." Minute(n)";        
+            break;
+//      Wenn der Post zwischen 1 Stunde und 24 Stunden her ist
+        case $diff < 86400:
+            $string = "Vor ".(floor($diff / 3600))." Stunde(n)";   
+            break;
+//      Wenn der Post zwischen 1 Tag und 7 Tagen her ist
+        case $diff < 604800:
+            $string = "Vor ".(floor($diff / 86400))." Tag(en)";
+            break;
+//      Wenn der Post länger als 7 tage her ist
+        case $diff >= 604800:
+            $string = " ".date('d.m.Y H:i:s', $timestamp);
+            break;
+    }
+    
+    return $string;
 }

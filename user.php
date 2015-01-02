@@ -2,25 +2,19 @@
 session_start();
 require_once 'functions.inc.php';
 
-if(isset($_POST['btn_send']))
-{
-    $_GET['userId'] = $_SESSION['userId'];
+if(isset($_POST['btn_delete_post'])){
     $dbCon = getDbConnection('post_it');
-    if($_POST['btn_send'] == 'updateInformations'){
-        $firstname = $dbCon->real_escape_string(htmlspecialchars($_POST['firstname']));
-        $lastname = $dbCon->real_escape_string(htmlspecialchars($_POST['lastname']));
-        $interests = $dbCon->real_escape_string(htmlspecialchars($_POST['interests']));
-
-        $insertQuery = "UPDATE users SET firstname= '$firstname', lastname= '$lastname', interests= '$interests' "
-                . "WHERE id=".$_SESSION['userId'];
-
-        if($insertResult = sendSqlQuery($dbCon, $insertQuery)){
-            $_SESSION['notice'] = "Informationen erfolgreich eingetragen";
-        }else{
-            $_SESSION['error'] = "Informationen konnten nicht eingetragen werden";
-        }
-    }
     
+    $post_id = $dbCon->real_escape_string(htmlspecialchars($_POST['btn_delete_post']));
+    
+    $deleteQuery = "DELETE FROM posts"
+            . " WHERE id=$post_id";
+    
+    if(sendSqlQuery($dbCon, $deleteQuery)){
+        $_SESSION['notice'] = "Post erfolgreich gelöscht";
+    }else{
+        $_SESSION['error'] = "Post konnte nicht gelöscht werden!";
+    }
 }
 
 if(isset($_SESSION['logged'])){
@@ -32,11 +26,19 @@ if(isset($_SESSION['logged'])){
     $userResult = sendSqlQuery($dbCon, $userQuery);
     $user = $userResult->fetch_assoc();
     
-    $postQuery = "SELECT id, title, message, timestamp, category_id FROM posts "
-            . "WHERE user_id=.".$user['id'];
+//    $postQuery = "SELECT id, title, message, timestamp, category_id FROM posts "
+//            . "WHERE user_id=.".$user['id'];
+    $postQuery = "SELECT p.id, p.title, p.message, UNIX_TIMESTAMP(p.timestamp) AS timestamp, u.name, u.id AS user_id, c.name AS category FROM posts p "
+        . "JOIN users u ON p.user_id = u.id "
+        . "JOIN categories c ON p.category_id = c.id "
+        . "WHERE user_id=".$user['id']." "
+        . "ORDER BY timestamp DESC";
     
-    $postResult = sendSqlQuery($dbCon, $userQuery);
+    $posts = sendSqlQuery($dbCon, $postQuery);
     
+    $catQuery = "SELECT id, name FROM categories";
+    
+    $categories = sendSqlQuery($dbCon, $catQuery);
     
 }else{
     $_SESSION['error'] = "Zutritt verweigert";
@@ -58,56 +60,83 @@ and open the template in the editor.
         <title><?php echo $user['name'] ; ?></title>
     </head>
     <body>
+        <?php include_once 'flash_messages.php'; ?>
         <div id="navigation" class="container_element">
             <?php include_once 'nav.php'; ?>
         </div>
+        <!--Div zum Anzeigen oder Bearbeiten von User-Informationen-->
         <div id="user_profile" class="container_element">
-            <h2 style="text-align: center;">Profil von <?php echo $user['name']; ?></h2>
-            <?php 
-            
-            /*----------------------------------------------------------------------------------------------------------------------------
-             * Die Bedingung ob eine Formularelement angezeig wird oder nicht sollte lieber nochmal überarbeitet werden.
-             * Weil das mit den vielen bedingungen sehr unübersichtlich ist. Lieber eine Große Bedingung über dem Formular und
-             * die normale ausgabe der Informationen dann in einem Else Block
-             -------------------------------------------------------------------------------------------------------------------------------*/
-            
-            ?>
-            <form action="user.php" method="post">
-                
-                <div style="float: left;margin-right: 20px;">
-                    <label>Vorname: </label><br>
-                    <?php if($user['firstname'] == '' || isset($_POST['btn_edit'])){ ?>
-                      <input name="firstname" value="<?php echo $user['firstname']?>" >
-                    <?php }else{ ?>
-                      <p><?php echo $user['firstname']; ?></p>
-                    <?php } ?>
-                </div>
-                
-                <div style="">
-                    <label>Nachname: </label><br>
-                    <?php if($user['lastname'] == '' || isset($_POST['btn_edit'])){ ?>
-                    <input name="lastname" value="<?php echo $user['lastname'];?>">
-                    <?php }else{ ?>
-                      <p><?php echo $user['lastname']; ?></p>
-                    <?php } ?>
-                </div>
-                
-                <div>
-                    <label>Interessen: </label><br>
-                    <?php if($user['interests'] == '' || isset($_POST['btn_edit'])){ ?>
-                    <textarea style="width: 400px;" name="interests" ><?php echo $user['interests'] ; ?></textarea>
-                    <?php }else{ ?>
-                      <p><?php echo $user['interests']; ?></p>
-                    <?php } ?>
-                </div>
-                <div>
-                    <button type="submit" name="btn_send" value="updateInformations">Speichern</button>
-                </div>
-            </form>
-            
+            <h2 style="text-align: center;">Profil von <?php echo ucfirst($user['name']); ?></h2><br> 
+            <!-- Wenn noch keine Einträge oder Bearbeiten geklickt wurde dann Formular zum Erstellen bzw. Bearbeiten der User-Informationen 
+                ansonsten normale ausgabe der User-Informationen -->
+            <?php if((!$user['firstname'] || !$user['lastname'] || !$user['interests'] || isset($_POST['btn_edit_info'])) && $_SESSION['userId'] == $user['id']){ ?>
+                <form action="update_user.php" method="post">
+                    <div style="float: left;margin-right: 20px;">
+                        <label>Vorname: </label><br>
+                        <input name="firstname" value="<?php echo $user['firstname']?>" >
+                    </div>
+                    <div style="">
+                        <label>Nachname: </label><br>
+                        <input name="lastname" value="<?php echo $user['lastname'];?>">
+                    </div>
+                    <div>
+                        <label>Interessen: </label><br>
+                        <textarea style="" name="interests" ><?php echo $user['interests'] ; ?></textarea>
+                    </div>
+                    <div>
+                        <button type="submit" name="btn_update_user" value="update">Speichern</button>
+                    </div>
+                </form>
+            <?php } else { ?>
+                <p>Vorname: <?php echo $user['firstname']; ?></p><br>
+                <p>Nachname: <?php echo $user['lastname']; ?></p><br>
+                <p>Interessen: <?php echo $user['interests']; ?></p><br>
+                <?php if($_SESSION['userId'] == $user['id']){ ?>
+                <form action="user.php?userId=<?php echo $user['id']; ?>" method="post">
+                    <button type="submit" name="btn_edit_info" value="<?php echo $user['id']; ?>">Bearbeiten</button>
+                </form> 
+                    
+                <?php } ?>
+            <?php } ?> 
         </div>
+        <!--Div zum Anzeigen der Posts des Users. Einzelne Posts können bearbeitet oder gelöscht werden. Beim klick auf bearbeiten wird anstelle der 
+            Postausgabe ein formular gerendert. -->
         <div id="content" class="container_element">
             
+            <?php while($post = $posts->fetch_assoc()){ ?>      
+                <?php if(isset($_POST['btn_edit_post']) && $_POST['btn_edit_post'] == $post['id']){ ?>    
+                    <form action="update_post.php" method="post">
+                        <input name="title" value="<?php echo $post['title']; ?>"><br>
+                        <textarea style="resize: none;width: 30%;" name="message"><?php echo $post['message']; ?></textarea><br>
+                        <select name="category">
+                            <option value="" disabled selected>Kategorie auswählen</option>
+                            <?php while($cat = $categories->fetch_assoc()){ ?>
+                               <option value="<?php echo $cat['id']; ?>" ><?php echo $cat['name']; ?></option>
+                            <?php } ?>
+                        </select>
+                        <button type="submit" name="btn_update_post" value="<?php echo $post['id']; ?>">Speichern</button>
+                    </form> 
+                <?php }else{ ?>
+                <div>
+                    <p>
+                        <span style="color: #596c25;"><?php echo ucfirst($post['name']); ?></span>
+                        <span style="color: grey;">- <?php echo $post['timestamp'];?></span>
+                    </p>
+                    <p>
+                        <?php echo $post['title'];?>
+                        (<?php echo $post['category'];?>)
+                    </p>
+                    <p><?php echo $post['message'];?></p>
+                    <?php if($_SESSION['userId'] == $user['id']){ ?>
+                        <form action="user.php?userId=<?php echo $user['id']; ?>" method="post">
+                            <button type="submit" name="btn_edit_post" value="<?php echo $post['id']; ?>">Bearbeiten</button>
+                            <button type="submit" name="btn_delete_post" value="<?php echo $post['id']; ?>">Löschen</button>
+                        </form>
+                    <?php } ?>
+                </div>
+                <?php } ?>
+                <hr>
+            <?php } ?>
         </div>
         <?php
         // put your code here

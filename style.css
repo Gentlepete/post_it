@@ -36,7 +36,7 @@ body > div {
     box-shadow: 5px 5px 5px #596c24;
     position: fixed;
     left: 20px;
-    top: 150px;
+    top: 15%;
     z-index: 2;
     width: 10%;
     
@@ -57,10 +57,10 @@ body > div {
 #user_profile {
     box-shadow: 5px 5px 5px #596c24;
     position: fixed;
-    width: 70%;
-    margin-left: 15%;
+    width: 10%;
+    left: 20px;
     margin-right: auto;
-    margin-top: -100px;
+    top: 30%;
     z-index: 2;
 }
 
@@ -72,29 +72,44 @@ body > div {
     margin-left: 15%;
     margin-right: auto;
     margin-top: 100px;
-    height: 2000px;
+    /*height: 2000px;*/
     
     
     
 }
 
 .flash{
-    margin-top: -10px; 
+    top: 30px;
     position: fixed;
     
-    box-shadow: 5px 5px 5px #596c24;
+    /*box-shadow: 5px 5px 5px #596c24;*/
     left: 20px;
 }
 
 
 #error{
     
-    color:red;
+    color:  red;
     border: 1px solid red;
 }
 
 #notice{
     color:green;
     border: 1px solid green;
+}
+
+#post_form{
+    /*box-shadow: 5px 5px 5px #596c24;*/
+    position: fixed;
+    width: 50%;
+    margin-left: 15%;
+    margin-right: auto;
+    top: 10%;
+    /*margin-top: -100px;*/
+    z-index: 2;
+}
+
+.timeDiff{
+    color: grey;
 }
 
