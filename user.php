@@ -15,7 +15,7 @@ if(isset($_POST['btn_delete_post'])){
     
     if(sendSqlQuery($dbCon, $deleteQuery)){
         $image = $imageResult->fetch_assoc();
-        if($image){
+        if($image['name']){
             $path = "images/".$image['name'];
             unlink($path);
         }

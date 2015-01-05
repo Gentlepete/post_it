@@ -12,8 +12,6 @@ and open the template in the editor.
     margin: auto;
 }
 
-
-
 body {
     padding-top: 50px;
     background-color: #e2ecc5;
@@ -35,7 +33,7 @@ body > div {
 
 #navigation {
     /*border: 1px solid black;*/
-    box-shadow: 5px 5px 5px #596c24;
+    box-shadow: 3px 3px 3px #596c24;
     position: fixed;
     left: 20px;
     top: 15%;
@@ -46,7 +44,7 @@ body > div {
 
 #head_menu {
     /*border: 1px solid black;*/
-    box-shadow: 5px 5px 5px #596c24;
+    box-shadow: 3px 3px 3px #596c24;
     position: fixed;
     width: 70%;
     margin-left: 15%;
@@ -57,7 +55,7 @@ body > div {
 }
 
 #user_profile {
-    box-shadow: 5px 5px 5px #596c24;
+    box-shadow: 3px 3px 3px #596c24;
     position: fixed;
     width: 10%;
     left: 20px;
@@ -148,4 +146,9 @@ body > div {
 .first_post_scroll{
     margin-top: 145px;
     
+}
+
+#search_form{
+    float: left;
+    margin-right: 10%;
 }

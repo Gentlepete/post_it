@@ -2,7 +2,7 @@
 <!-- 
 Formular zur Auswahl einer gesuchten Kategorie und eingeben eines Suchbegriffs
 -->
-<form style="float: left;margin-right: 20%;" action="index.php" method="get">
+<form action="index.php" method="get">
     <span id="category_list">
         <select name="category">
             <option value="" disabled selected>Kategorie auswählen</option>
@@ -26,12 +26,12 @@ Formular zum Login eines Nutzers
     
 <form action="login.php" method="post">   
     <span id="login_name">
-        <label>Username: </label>
-        <input name="username" required autofocus>
+        <!--<label>Username: </label>-->
+        <input name="username" placeholder="Username" required autofocus>
     </span>
     <span id="login_password">
-        <label>Passwort: </label>
-        <input type="password" name="password" required>
+        <!--<label>Passwort: </label>-->
+        <input type="password" name="password" placeholder="Passwort" required>
     </span>
     <span style="" id="remember_me">
         <label>Login speichern? </label>
