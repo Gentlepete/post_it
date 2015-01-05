@@ -44,6 +44,8 @@ and open the template in the editor.
     <head>
         <meta charset="UTF-8">
         <link rel="stylesheet" href="style.css" type="text/css">
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script type="text/JavaScript" src="application.js"></script> 
         <title>Post-it</title>
     </head>
     <body>
@@ -59,29 +61,30 @@ and open the template in the editor.
         <div class="container_element content">    
             
                 <?php if(isset($_SESSION['logged'])){ ?>
-                    <div style="text-align: center;" class="container_element">
-                    <form action="create_post.php" method="post" enctype="multipart/form-data">
-                        <input class="title" name="title" placeholder="Titel" autocomplete="off"><br>
-                        <textarea style="resize: none;width: 30%;" name="message" placeholder="Gib hier Deine Nachricht ein..."></textarea><br>
-                        <label>Bild Hochladen: </label>
-                        <!--<input type="hidden" name="MAX_FILE_SIZE" value="500000" />-->
-                        <input type="file" name="postImg" id="img" accept="image/*" placeholder="Hier kannst du ein Bild hochladen"><br>
-                        <select name="category">
-                            <option value="" disabled selected>Kategorie auswählen</option>
-                            <?php while($cat = $categories->fetch_assoc()){ ?>
-                               <option value="<?php echo $cat['id']; ?>" ><?php echo $cat['name']; ?></option>
-                            <?php } ?>
-                        </select>
-                        <button type="submit" name="btn_post" value="pressed">Posten</button>
-                    </form>
+                    <div class="container_element" id="post_form_div">
+                        <form action="create_post.php" method="post" enctype="multipart/form-data">
+                            <input class="title" name="title" placeholder="Titel" autocomplete="off"><br>
+                            <textarea style="resize: none;width: 30%;" name="message" placeholder="Gib hier Deine Nachricht ein..."></textarea><br>
+                            <label>Bild Hochladen: </label>
+                            <!--<input type="hidden" name="MAX_FILE_SIZE" value="500000" />-->
+                            <input type="file" name="postImg" id="img" accept="image/*" ><br>
+                            <select name="category">
+                                <option value="" disabled selected>Kategorie auswählen</option>
+                                <?php while($cat = $categories->fetch_assoc()){ ?>
+                                   <option value="<?php echo $cat['id']; ?>" ><?php echo $cat['name']; ?></option>
+                                <?php } ?>
+                            </select>
+                            <button type="submit" name="btn_post" value="pressed">Posten</button>
+                        </form>
                     </div>
-                    <hr>
+                    
                 <?php } ?>
            
         
             <?php while($post = $postResult->fetch_assoc()){ ?>
             
             <div class="post">
+                <hr>
                 <p>
                     <a href="user.php?userId=<?php echo $post['user_id']; ?>"><?php echo ucfirst($post['name']); ?></a>
                     <span class="timeDiff" title="<?php echo date('d.m.Y H:i:s', $post['timestamp']);?>">- <?php echo timeDiff($post['timestamp']);?> - <?php echo $post['category'];?> </span>
@@ -95,7 +98,7 @@ and open the template in the editor.
                     <?php } ?>
                 </p>
             </div>
-            <hr>
+            
             
             <?php } ?>
         </div>

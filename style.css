@@ -130,3 +130,22 @@ body > div {
 .postImage{
     max-width: 100%;
 }
+
+#post_form_div{
+    background-color: white;
+    z_index: 2;
+    text-align: center;
+}
+
+.post_form_div_scroll{
+    box-shadow: 3px 3px 3px #b5c48c;
+    left: 15%;
+    top: 70px;
+    width: 70%;
+    position: fixed;
+}
+
+.first_post_scroll{
+    margin-top: 145px;
+    
+}

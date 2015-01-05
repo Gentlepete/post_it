@@ -7,10 +7,18 @@ if(isset($_POST['btn_delete_post'])){
     
     $post_id = $dbCon->real_escape_string(htmlspecialchars($_POST['btn_delete_post']));
     
+    $imgQuery = "SELECT img_source AS name FROM posts "
+            . "WHERE id=$post_id";
+    $imageResult = sendSqlQuery($dbCon, $imgQuery);
     $deleteQuery = "DELETE FROM posts"
             . " WHERE id=$post_id";
     
     if(sendSqlQuery($dbCon, $deleteQuery)){
+        $image = $imageResult->fetch_assoc();
+        if($image){
+            $path = "images/".$image['name'];
+            unlink($path);
+        }
         $_SESSION['notice'] = "Post erfolgreich gelöscht";
     }else{
         $_SESSION['error'] = "Post konnte nicht gelöscht werden!";
@@ -62,7 +70,7 @@ and open the template in the editor.
         <title><?php echo $user['name'] ; ?></title>
     </head>
     <body>
-        <?php include_once 'flash_messages.php'; ?>
+        
         <div id="navigation" class="container_element">
             <?php include_once 'nav.php'; ?>
         </div>
@@ -112,13 +120,21 @@ and open the template in the editor.
                         <input class="title" name="title" value="<?php echo $post['title']; ?>" autocomplete="off"><br>
                         <textarea style="resize: none;width: 30%;" name="message"><?php echo $post['message']; ?></textarea><br>
                         <select name="category">
-                            <option value="" disabled selected>Kategorie auswählen</option>
+                            
                             <?php while($cat = $categories->fetch_assoc()){ ?>
-                               <option value="<?php echo $cat['id']; ?>" ><?php echo $cat['name']; ?></option>
+                                <?php if($post['category'] == $cat['name']){ ?>
+                                    <option value="<?php echo $cat['id']; ?>" selected><?php echo $cat['name']; ?></option>
+                                <?php }else{ ?>
+                                    <option value="<?php echo $cat['id']; ?>" ><?php echo $cat['name']; ?></option>
+                                <?php } ?>
                             <?php } ?>
                         </select>
                         <button type="submit" name="btn_update_post" value="<?php echo $post['id']; ?>">Speichern</button>
                     </form> 
+                    <?php if($post['img_source']){ ?>
+                            <?php $src = $file_path.$post['img_source']; ?>
+                            <a href="<?php echo $src; ?>"><img src="<?php echo $src; ?>" class="postImage"></a>
+                    <?php } ?>
                 <?php }else{ ?>
                 <div class="post">
                     <p>
@@ -127,7 +143,7 @@ and open the template in the editor.
                     </p>
                     <h2><?php echo $post['title'];?></h2>
                     <p class="post_message">
-                        <?php echo $post['message'];?>
+                        <?php echo $post['message'];?><br>
                         <?php if($post['img_source']){ ?>
                             <?php $src = $file_path.$post['img_source']; ?>
                             <a href="<?php echo $src; ?>"><img src="<?php echo $src; ?>" class="postImage"></a>

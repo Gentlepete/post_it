@@ -11,20 +11,20 @@ if(isset($_POST['btn_post'])){
             $cat_id = $dbCon->real_escape_string(htmlspecialchars($_POST['category']));        
             $user_id = $_SESSION['userId'];
             $image = $_FILES['postImg']; 
-    //        var_dump($image);
+            $random = rand(1,100000);
 
             $insertQuery = "INSERT posts VALUES (NULL, '$title', '$message', ";
             var_dump($image['tmp_name']);
             if(!empty($image['tmp_name'])){
                 $folder = "images/";
-                move_uploaded_file($_FILES['postImg']['tmp_name'], "$folder".$_FILES['postImg']['name']);
-                $insertQuery .= "'".$image['name']."',";
+                move_uploaded_file($_FILES['postImg']['tmp_name'], "$folder"."$user_id".$random."$cat_id".$image['name']);
+                $insertQuery .= "'".$user_id.$random."$cat_id".$image['name']."',";
             }else{
                $insertQuery .= "NULL,";
             }
             
             $insertQuery .= "'$cat_id', '$user_id', NULL)";
-            var_dump($insertQuery);
+            
             $insertResult = sendSqlQuery($dbCon, $insertQuery);
 
             if($insertResult){
