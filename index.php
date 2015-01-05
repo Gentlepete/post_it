@@ -8,32 +8,21 @@ if(isset($_COOKIE['rememberMeToken']) && isset($_COOKIE['rememberMe']) && !isset
     }
 }
 
-
+$postQuery = "SELECT p.title, p.message, p.img_source, UNIX_TIMESTAMP(p.timestamp) AS timestamp, u.name, u.id AS user_id, c.name AS category FROM posts p "
+            . "JOIN users u ON p.user_id = u.id "
+            . "JOIN categories c ON p.category_id = c.id ";
 
 if(isset($_GET['btn_search'])){ 
     $search = $_GET['search'];
     if(isset($_GET['category'])){
         $cat_id = $_GET['category'];
-        
-        $postQuery = "SELECT p.title, p.message, UNIX_TIMESTAMP(p.timestamp) AS timestamp, u.name, u.id AS user_id, c.name AS category FROM posts p "
-            . "JOIN users u ON p.user_id = u.id "
-            . "JOIN categories c ON p.category_id = c.id "
-            . "WHERE p.category_id=$cat_id AND (p.title LIKE '%$search%' OR p.message LIKE '%$search%') "
-            . "ORDER BY p.timestamp DESC";
+        $postQuery .= "WHERE p.category_id=$cat_id AND (p.title LIKE '%$search%' OR p.message LIKE '%$search%') ";
     }else{
-        $postQuery = "SELECT p.title, p.message, UNIX_TIMESTAMP(p.timestamp) AS timestamp, u.name, u.id AS user_id, c.name AS category FROM posts p "
-            . "JOIN users u ON p.user_id = u.id "
-            . "JOIN categories c ON p.category_id = c.id "
-            . "WHERE p.title LIKE '%$search%' OR p.message LIKE '%$search%' "
-            . "ORDER BY timestamp DESC";
+        $postQuery .= "WHERE p.title LIKE '%$search%' OR p.message LIKE '%$search%' ";    
     }
-}else{
-
-    $postQuery = "SELECT p.title, p.message, UNIX_TIMESTAMP(p.timestamp) AS timestamp, u.name, u.id AS user_id, c.name AS category FROM posts p "
-            . "JOIN users u ON p.user_id = u.id "
-            . "JOIN categories c ON p.category_id = c.id "
-            . "ORDER BY timestamp DESC";
 }
+
+$postQuery .= "ORDER BY timestamp DESC";
 $dbCon = getDbConnection('post_it');
 
 $catQuery = "SELECT id, name FROM categories";
@@ -42,7 +31,7 @@ $categories_search = sendSqlQuery($dbCon, $catQuery);
 $categories = sendSqlQuery($dbCon, $catQuery);
 
 $postResult = sendSqlQuery($dbCon, $postQuery);
-
+$file_path = 'http://localhost/Post-it/images/';
 
 ?>
 <!DOCTYPE html>
@@ -66,37 +55,45 @@ and open the template in the editor.
             <?php include_once 'head.php'; ?>
             
         </div>
-        <div id="content" class="container_element">
+        
+        <div class="container_element content">    
             
-            <div style="text-align: center;" class="container_element">
                 <?php if(isset($_SESSION['logged'])){ ?>
-                <form action="create_post.php" method="post">
-                    <input name="title" placeholder="Titel"><br>
-                    <textarea style="resize: none;width: 30%;" name="message" placeholder="Gib hier Deine Nachricht ein..."></textarea><br>
-                    
-                    <select name="category">
-                        <option value="" disabled selected>Kategorie auswählen</option>
-                        <?php while($cat = $categories->fetch_assoc()){ ?>
-                           <option value="<?php echo $cat['id']; ?>" ><?php echo $cat['name']; ?></option>
-                        <?php } ?>
-                    </select>
-                    <button type="submit" name="btn_post" value="pressed">Posten</button>
-                </form>
+                    <div style="text-align: center;" class="container_element">
+                    <form action="create_post.php" method="post" enctype="multipart/form-data">
+                        <input class="title" name="title" placeholder="Titel" autocomplete="off"><br>
+                        <textarea style="resize: none;width: 30%;" name="message" placeholder="Gib hier Deine Nachricht ein..."></textarea><br>
+                        <label>Bild Hochladen: </label>
+                        <!--<input type="hidden" name="MAX_FILE_SIZE" value="500000" />-->
+                        <input type="file" name="postImg" id="img" accept="image/*" placeholder="Hier kannst du ein Bild hochladen"><br>
+                        <select name="category">
+                            <option value="" disabled selected>Kategorie auswählen</option>
+                            <?php while($cat = $categories->fetch_assoc()){ ?>
+                               <option value="<?php echo $cat['id']; ?>" ><?php echo $cat['name']; ?></option>
+                            <?php } ?>
+                        </select>
+                        <button type="submit" name="btn_post" value="pressed">Posten</button>
+                    </form>
+                    </div>
+                    <hr>
                 <?php } ?>
-            </div>
-            <hr>
+           
+        
             <?php while($post = $postResult->fetch_assoc()){ ?>
             
-            <div>
+            <div class="post">
                 <p>
-                    <a href="user.php?userId=<?php echo $post['user_id']; ?>"><?php echo $post['name']; ?></a>
-                    <span class="timeDiff">- <?php echo timeDiff($post['timestamp']);?></span>
+                    <a href="user.php?userId=<?php echo $post['user_id']; ?>"><?php echo ucfirst($post['name']); ?></a>
+                    <span class="timeDiff" title="<?php echo date('d.m.Y H:i:s', $post['timestamp']);?>">- <?php echo timeDiff($post['timestamp']);?> - <?php echo $post['category'];?> </span>
                 </p>
+                <h2><?php echo $post['title'];?></h2>
                 <p>
-                    <?php echo $post['title'];?>
-                    (<?php echo $post['category'];?>)
+                    <?php echo $post['message'];?><br>
+                    <?php if($post['img_source']){ ?>
+                        <?php $src = $file_path.$post['img_source']; ?>
+                    <a href="<?php echo $src; ?>"><img src="<?php echo $src; ?>" class="postImage"></a>
+                    <?php } ?>
                 </p>
-                <p><?php echo $post['message'];?></p>
             </div>
             <hr>
             

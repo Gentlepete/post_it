@@ -28,7 +28,7 @@ if(isset($_SESSION['logged'])){
     
 //    $postQuery = "SELECT id, title, message, timestamp, category_id FROM posts "
 //            . "WHERE user_id=.".$user['id'];
-    $postQuery = "SELECT p.id, p.title, p.message, UNIX_TIMESTAMP(p.timestamp) AS timestamp, u.name, u.id AS user_id, c.name AS category FROM posts p "
+    $postQuery = "SELECT p.id, p.title, p.message, p.img_source, UNIX_TIMESTAMP(p.timestamp) AS timestamp, u.name, u.id AS user_id, c.name AS category FROM posts p "
         . "JOIN users u ON p.user_id = u.id "
         . "JOIN categories c ON p.category_id = c.id "
         . "WHERE user_id=".$user['id']." "
@@ -39,6 +39,8 @@ if(isset($_SESSION['logged'])){
     $catQuery = "SELECT id, name FROM categories";
     
     $categories = sendSqlQuery($dbCon, $catQuery);
+    
+    $file_path = 'http://localhost/Post-it/images/';
     
 }else{
     $_SESSION['error'] = "Zutritt verweigert";
@@ -101,12 +103,13 @@ and open the template in the editor.
         </div>
         <!--Div zum Anzeigen der Posts des Users. Einzelne Posts können bearbeitet oder gelöscht werden. Beim klick auf bearbeiten wird anstelle der 
             Postausgabe ein formular gerendert. -->
-        <div id="content" class="container_element">
+        <div class="container_element content">
             
-            <?php while($post = $posts->fetch_assoc()){ ?>      
+            <?php while($post = $posts->fetch_assoc()){ ?>  
+                
                 <?php if(isset($_POST['btn_edit_post']) && $_POST['btn_edit_post'] == $post['id']){ ?>    
                     <form action="update_post.php" method="post">
-                        <input name="title" value="<?php echo $post['title']; ?>"><br>
+                        <input class="title" name="title" value="<?php echo $post['title']; ?>" autocomplete="off"><br>
                         <textarea style="resize: none;width: 30%;" name="message"><?php echo $post['message']; ?></textarea><br>
                         <select name="category">
                             <option value="" disabled selected>Kategorie auswählen</option>
@@ -117,16 +120,20 @@ and open the template in the editor.
                         <button type="submit" name="btn_update_post" value="<?php echo $post['id']; ?>">Speichern</button>
                     </form> 
                 <?php }else{ ?>
-                <div>
+                <div class="post">
                     <p>
                         <span style="color: #596c25;"><?php echo ucfirst($post['name']); ?></span>
-                        <span style="color: grey;">- <?php echo $post['timestamp'];?></span>
+                        <span style="color: grey;">- <?php echo timeDiff($post['timestamp']);?> - <?php echo $post['category'];?></span>
                     </p>
-                    <p>
-                        <?php echo $post['title'];?>
-                        (<?php echo $post['category'];?>)
+                    <h2><?php echo $post['title'];?></h2>
+                    <p class="post_message">
+                        <?php echo $post['message'];?>
+                        <?php if($post['img_source']){ ?>
+                            <?php $src = $file_path.$post['img_source']; ?>
+                            <a href="<?php echo $src; ?>"><img src="<?php echo $src; ?>" class="postImage"></a>
+                        <?php } ?>
                     </p>
-                    <p><?php echo $post['message'];?></p>
+                    
                     <?php if($_SESSION['userId'] == $user['id']){ ?>
                         <form action="user.php?userId=<?php echo $user['id']; ?>" method="post">
                             <button type="submit" name="btn_edit_post" value="<?php echo $post['id']; ?>">Bearbeiten</button>
@@ -136,10 +143,9 @@ and open the template in the editor.
                 </div>
                 <?php } ?>
                 <hr>
+                
             <?php } ?>
         </div>
-        <?php
-        // put your code here
-        ?>
+        
     </body>
 </html>

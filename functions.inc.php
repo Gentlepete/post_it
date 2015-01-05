@@ -239,7 +239,7 @@ function timeDiff($timestamp){
             break;
 //      Wenn der Post zwischen 1 Tag und 7 Tagen her ist
         case $diff < 604800:
-            $string = "Vor ".(floor($diff / 86400))." Tag(en)";
+            $string = "Vor ".(floor($diff / 86400) + 1)." Tag(en)";
             break;
 //      Wenn der Post länger als 7 tage her ist
         case $diff >= 604800:
@@ -248,4 +248,13 @@ function timeDiff($timestamp){
     }
     
     return $string;
+}
+
+function fileSizeOkay($size){
+    if($size < 500000){
+        return true;
+    }else{
+        return false;
+    }
+        
 }

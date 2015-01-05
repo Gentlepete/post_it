@@ -2,7 +2,7 @@
 <!-- 
 Formular zur Auswahl einer gesuchten Kategorie und eingeben eines Suchbegriffs
 -->
-<form style="float: left;" action="index.php" method="get">
+<form style="float: left;margin-right: 20%;" action="index.php" method="get">
     <span id="category_list">
         <select name="category">
             <option value="" disabled selected>Kategorie auswählen</option>
@@ -13,7 +13,7 @@ Formular zur Auswahl einer gesuchten Kategorie und eingeben eines Suchbegriffs
     </span>
     <span id="search">
         <label>Suche: </label>
-        <input type="text" name="search">
+        <input type="text" name="search" autocomplete="off">
     </span>
     <span class="button">
         <button type="submit" name="btn_search">Suchen</button>
@@ -27,21 +27,23 @@ Formular zum Login eines Nutzers
 <form action="login.php" method="post">   
     <span id="login_name">
         <label>Username: </label>
-        <input name="username" required>
+        <input name="username" required autofocus>
     </span>
     <span id="login_password">
         <label>Passwort: </label>
         <input type="password" name="password" required>
     </span>
-    
-    <span class="button">
-        <button type="submit" name="btn_send" value="login">Login</button>
-    </span> 
-    <span style="float: right;margin-right: 150px;" id="remember_me">
+    <span style="" id="remember_me">
         <label>Login speichern? </label>
         <input type="checkbox" name="rememberMe" value="1">
     </span>
+    <span class="button">
+        <button type="submit" name="btn_send" value="login">Login</button>
+    </span> 
 </form>
 
+<?php }else{ ?>
+<span style="float: right;">Eingeloggt als: <?php echo $_SESSION['username']; ?></span>
 <?php } ?>
+
 
