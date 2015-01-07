@@ -28,6 +28,10 @@ body > div {
     padding: 10px;
 }
 
+li{
+    list-style-type: none;
+}
+
 #navigation {
     /*border: 1px solid black;*/
     box-shadow: 3px 3px 3px #596c24;
@@ -165,3 +169,15 @@ body > div {
     display: inline-block;
 }
 
+.comment{
+    width: 200px;
+}
+
+.comments{
+    display: none;
+    background-color: white;
+    border: 1px solid #b5c48c;
+    box-shadow: 3px 3px 3px #596c24;
+    position: absolute;
+    z-index: 2;
+}

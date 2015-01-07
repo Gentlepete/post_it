@@ -8,13 +8,13 @@ if(isset($_COOKIE['rememberMeToken']) && isset($_COOKIE['rememberMe']) && !isset
     }
 }
 
-$postQuery = "SELECT p.title, p.message, p.img_source, UNIX_TIMESTAMP(p.timestamp) AS timestamp, u.name, u.id AS user_id, c.name AS category FROM posts p "
+$postQuery = "SELECT p.id, p.title, p.message, p.img_source, UNIX_TIMESTAMP(p.timestamp) AS timestamp, u.name, u.id AS user_id, c.name AS category FROM posts p "
             . "JOIN users u ON p.user_id = u.id "
             . "JOIN categories c ON p.category_id = c.id ";
 
 if(isset($_GET['btn_search'])){ 
     $search = $_GET['search'];
-    if(isset($_GET['category'])){
+    if(isset($_GET['category']) && $_GET['category'] != "all"){
         $cat_id = $_GET['category'];
         $postQuery .= "WHERE p.category_id=$cat_id AND (p.title LIKE '%$search%' OR p.message LIKE '%$search%') ";
     }else{
@@ -32,6 +32,7 @@ $categories = sendSqlQuery($dbCon, $catQuery);
 
 $postResult = sendSqlQuery($dbCon, $postQuery);
 $file_path = 'http://localhost/Post-it/images/';
+
 
 ?>
 <!DOCTYPE html>
@@ -99,6 +100,42 @@ and open the template in the editor.
                             <a href="<?php echo $src; ?>"><img src="<?php echo $src; ?>" class="postImage"></a>
                             <?php } ?>
                         </p>
+                        <?php $commentsQuery = "SELECT c.id, c.message, c.user_id, UNIX_TIMESTAMP(c.timestamp) AS timestamp, u.name AS username FROM comments c "
+                                . "JOIN posts p ON c.post_id = p.id "
+                                . "JOIN users u ON c.user_id = u.id "
+                                . "WHERE c.post_id = ".$post['id'] ; ?>
+                        <?php $commentsResult = sendSqlQuery($dbCon, $commentsQuery); ?>
+                        <ul style="margin-top: 10px;">
+                            <hr style="color: #e2ecc5;">
+                            <?php if($commentsResult->num_rows > 0){ ?>
+                                
+                                <input class="comments_link" type="button" value="Kommentare">
+                                <div class="container_element comments">  
+                                    <?php while($comment = $commentsResult->fetch_assoc()){ ?>
+                                    
+                                       <li>
+                                           <p>
+                                                <a href="user.php?userId=<?php echo $comment['user_id']; ?>">
+                                                <?php echo ucfirst($comment['username']); ?>
+                                                </a>
+                                                <span class="timeDiff" title="<?php echo date('d.m.Y H:i:s', $comment['timestamp']);?>">
+                                                     - <?php echo timeDiff($comment['timestamp']);?>
+                                                </span> 
+                                           </p>
+                                           <p>
+                                               <?php echo $comment['message'];?>
+                                           </p> 
+                                       </li> 
+                                    
+                                    <?php } ?>   
+                                </div>
+                            <?php } ?>
+                            <form action="comment.php" method="post">
+                                <input name="post_id" value="<?php echo $post['id']; ?>" hidden>
+                                <input class="comment" name="comment" placeholder="Kommentieren">
+                                <input type="submit" name="btn_comment" hidden>
+                            </form> 
+                        </ul>
                     </div>
 
 

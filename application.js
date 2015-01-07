@@ -11,6 +11,10 @@ $(document).ready(function(){
    setTimeout(function(){
        $(".flash").fadeOut(500);
    }, 1000);
+   
+   $(".comments_link").click(function(){
+       $(this).next("div").slideToggle();
+   });
       
 });
 

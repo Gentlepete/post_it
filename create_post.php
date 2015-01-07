@@ -20,7 +20,7 @@ if(isset($_POST['btn_post'])){
                 $folder = "images/";
                 move_uploaded_file($_FILES['postImg']['tmp_name'], "$folder"."$user_id".$random."$cat_id".$image['name']);
                 $insertQuery .= "'".$user_id.$random."$cat_id".$image['name']."',";
-            }elseif(!in_array($image['type'], $allowed)){
+            }elseif(!empty($image['tmp_name']) && !in_array($image['type'], $allowed)){
                 $_SESSION['error'] = "Nur Bilder (jpeg, gif oder png) erlaubt";
                 header('Location: index.php');
             }else {
