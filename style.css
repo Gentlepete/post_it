@@ -30,6 +30,7 @@ body > div {
 
 li{
     list-style-type: none;
+    margin-bottom: 20px;
 }
 
 #navigation {
@@ -176,8 +177,17 @@ li{
 .comments{
     display: none;
     background-color: white;
-    border: 1px solid #b5c48c;
-    box-shadow: 3px 3px 3px #596c24;
-    position: absolute;
-    z-index: 2;
+    border-left: 1px solid #b5c48c;
+    max-height: 400px;
+    overflow: auto;
+    margin-left: 0;
+    padding-left: 10px;
+    width: 50%;
+    
 }
+
+.post_title{
+/*    border-bottom: 1px solid #b5c48c;*/
+    text-decoration-line: underline;
+}
+

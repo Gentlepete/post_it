@@ -92,7 +92,7 @@ and open the template in the editor.
                             <a href="user.php?userId=<?php echo $post['user_id']; ?>"><?php echo ucfirst($post['name']); ?></a>
                             <span class="timeDiff" title="<?php echo date('d.m.Y H:i:s', $post['timestamp']);?>">- <?php echo timeDiff($post['timestamp']);?> - <?php echo $post['category'];?> </span>
                         </p>
-                        <h2><?php echo $post['title'];?></h2>
+                        <h2 class="post_title"><?php echo $post['title'];?></h2>
                         <p>
                             <?php echo $post['message'];?><br>
                             <?php if($post['img_source']){ ?>
@@ -110,7 +110,7 @@ and open the template in the editor.
                             <?php if($commentsResult->num_rows > 0){ ?>
                                 
                                 <input class="comments_link" type="button" value="Kommentare">
-                                <div class="container_element comments">  
+                                <div class="comments">  
                                     <?php while($comment = $commentsResult->fetch_assoc()){ ?>
                                     
                                        <li>
