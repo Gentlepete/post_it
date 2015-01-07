@@ -1,11 +1,11 @@
 <nav>
-    <ul>
-        <li><a href="index.php">Sartseite</a></li>
+    
+        <a href="index.php">Sartseite</a><br>
         <?php if(isset($_SESSION['logged'])){ ?>
-            <li><a href="user.php?userId=<?php echo $_SESSION['userId']; ?>">Mein Profil</a></li>
-            <li><a href="logout.php">Logout</a></li>
+            <a href="user.php?userId=<?php echo $_SESSION['userId']; ?>">Mein Profil</a><br>
+            <a href="logout.php">Logout</a><br>
         <?php }else{ ?>
-        <li><a href="sign_up.php">Registrieren</a></li>
+            <a href="sign_up.php">Registrieren</a><br>
         <?php } ?>
-    </ul>
+   
 </nav>

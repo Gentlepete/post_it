@@ -12,19 +12,22 @@ if(isset($_POST['btn_post'])){
             $user_id = $_SESSION['userId'];
             $image = $_FILES['postImg']; 
             $random = rand(1,100000);
-
+            
             $insertQuery = "INSERT posts VALUES (NULL, '$title', '$message', ";
-            var_dump($image['tmp_name']);
-            if(!empty($image['tmp_name'])){
+            $allowed = array("image/jpeg", "image/gif", "image/png", "image/jpg");
+            var_dump($image['type']);
+            if(!empty($image['tmp_name']) && in_array($image['type'], $allowed)){
                 $folder = "images/";
                 move_uploaded_file($_FILES['postImg']['tmp_name'], "$folder"."$user_id".$random."$cat_id".$image['name']);
                 $insertQuery .= "'".$user_id.$random."$cat_id".$image['name']."',";
-            }else{
+            }elseif(!in_array($image['type'], $allowed)){
+                $_SESSION['error'] = "Nur Bilder (jpeg, gif oder png) erlaubt";
+                header('Location: index.php');
+            }else {
                $insertQuery .= "NULL,";
             }
             
             $insertQuery .= "'$cat_id', '$user_id', NULL)";
-            
             $insertResult = sendSqlQuery($dbCon, $insertQuery);
 
             if($insertResult){

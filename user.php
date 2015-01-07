@@ -65,12 +65,14 @@ and open the template in the editor.
 <html>
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="style.css" type="text/css">
-        
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script type="text/JavaScript" src="application.js"></script>
         <title><?php echo $user['name'] ; ?></title>
     </head>
     <body>
-        
+        <?php include_once 'flash_messages.php'; ?>
         <div id="navigation" class="container_element">
             <?php include_once 'nav.php'; ?>
         </div>
@@ -114,50 +116,51 @@ and open the template in the editor.
         <div class="container_element content">
             
             <?php while($post = $posts->fetch_assoc()){ ?>  
-                
-                <?php if(isset($_POST['btn_edit_post']) && $_POST['btn_edit_post'] == $post['id']){ ?>    
-                    <form action="update_post.php" method="post">
-                        <input class="title" name="title" value="<?php echo $post['title']; ?>" autocomplete="off"><br>
-                        <textarea style="resize: none;width: 30%;" name="message"><?php echo $post['message']; ?></textarea><br>
-                        <select name="category">
-                            
-                            <?php while($cat = $categories->fetch_assoc()){ ?>
-                                <?php if($post['category'] == $cat['name']){ ?>
-                                    <option value="<?php echo $cat['id']; ?>" selected><?php echo $cat['name']; ?></option>
-                                <?php }else{ ?>
-                                    <option value="<?php echo $cat['id']; ?>" ><?php echo $cat['name']; ?></option>
+                <div id="<?php echo $post['id']; ?>" class="post">
+                    <?php if(isset($_POST['btn_edit_post']) && $_POST['btn_edit_post'] == $post['id']){ ?>    
+                        <form action="update_post.php" method="post">
+                            <input class="title" name="title" value="<?php echo $post['title']; ?>" autocomplete="off"><br>
+                            <textarea style="resize: none;width: 30%;" name="message"><?php echo $post['message']; ?></textarea><br>
+                            <select name="category">
+
+                                <?php while($cat = $categories->fetch_assoc()){ ?>
+                                    <?php if($post['category'] == $cat['name']){ ?>
+                                        <option value="<?php echo $cat['id']; ?>" selected><?php echo $cat['name']; ?></option>
+                                    <?php }else{ ?>
+                                        <option value="<?php echo $cat['id']; ?>" ><?php echo $cat['name']; ?></option>
+                                    <?php } ?>
                                 <?php } ?>
-                            <?php } ?>
-                        </select>
-                        <button type="submit" name="btn_update_post" value="<?php echo $post['id']; ?>">Speichern</button>
-                    </form> 
-                    <?php if($post['img_source']){ ?>
-                            <?php $src = $file_path.$post['img_source']; ?>
-                            <a href="<?php echo $src; ?>"><img src="<?php echo $src; ?>" class="postImage"></a>
-                    <?php } ?>
-                <?php }else{ ?>
-                <div class="post">
-                    <p>
-                        <span style="color: #596c25;"><?php echo ucfirst($post['name']); ?></span>
-                        <span style="color: grey;">- <?php echo timeDiff($post['timestamp']);?> - <?php echo $post['category'];?></span>
-                    </p>
-                    <h2><?php echo $post['title'];?></h2>
-                    <p class="post_message">
-                        <?php echo $post['message'];?><br>
+                            </select>
+                            <button type="submit" name="btn_update_post" value="<?php echo $post['id']; ?>">Speichern</button>
+                        </form> 
                         <?php if($post['img_source']){ ?>
-                            <?php $src = $file_path.$post['img_source']; ?>
-                            <a href="<?php echo $src; ?>"><img src="<?php echo $src; ?>" class="postImage"></a>
+                                <?php $src = $file_path.$post['img_source']; ?>
+                                <a href="<?php echo $src; ?>"><img src="<?php echo $src; ?>" class="postImage"></a>
                         <?php } ?>
-                    </p>
-                    
-                    <?php if($_SESSION['userId'] == $user['id']){ ?>
-                        <form action="user.php?userId=<?php echo $user['id']; ?>" method="post">
-                            <button type="submit" name="btn_edit_post" value="<?php echo $post['id']; ?>">Bearbeiten</button>
-                            <button type="submit" name="btn_delete_post" value="<?php echo $post['id']; ?>">Löschen</button>
-                        </form>
+                    <?php }else{ ?>
+
+                        <p>
+                            <span style="color: #596c25;"><?php echo ucfirst($post['name']); ?></span>
+                            <span style="color: grey;">- <?php echo timeDiff($post['timestamp']);?> - <?php echo $post['category'];?></span>
+                        </p>
+                        <h2><?php echo $post['title'];?></h2>
+                        <p class="post_message">
+                            <?php echo $post['message'];?><br>
+                            <?php if($post['img_source']){ ?>
+                                <?php $src = $file_path.$post['img_source']; ?>
+                                <a href="<?php echo $src; ?>"><img src="<?php echo $src; ?>" class="postImage"></a>
+                            <?php } ?>
+                        </p>
+
+                        <?php if($_SESSION['userId'] == $user['id']){ ?>
+                            <form action="user.php?userId=<?php echo $user['id']."#".$post['id']; ?>" method="post">
+                                <button type="submit" name="btn_edit_post" value="<?php echo $post['id']; ?>">Bearbeiten</button>
+                                <button type="submit" name="btn_delete_post" value="<?php echo $post['id']; ?>">Löschen</button>
+                            </form>
+                        <?php } ?>
+
                     <?php } ?>
                 </div>
-                <?php } ?>
                 <hr>
                 
             <?php } ?>

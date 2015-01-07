@@ -38,7 +38,10 @@ if(isset($_POST['btn_send'])){
 <html>
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="style.css" type="text/css">
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script type="text/JavaScript" src="application.js"></script>
         <title>Registrieren</title>
     </head>
     <body>
@@ -50,7 +53,7 @@ if(isset($_POST['btn_send'])){
         <div id="head_menu" class="container_element">
             <h2>Registrierung</h2>
         </div>
-        <div id="content" class="container_element">
+        <div class="container_element content">
             <form action="sign_up.php" method="post">
                 <fieldset>
                     <legend >Bitte füllen Sie alle Formularfelder aus:</legend>

@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once 'functions.inc.php';
-
+$post_id= NULL;
 if(isset($_POST['btn_update_post']))
 {
     
@@ -26,4 +26,4 @@ if(isset($_POST['btn_update_post']))
     }
 }
 
-header('Location: user.php?userId='.$_SESSION['userId']);
+header('Location: user.php?userId='.$_SESSION['userId'].'#'.$post_id);

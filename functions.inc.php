@@ -60,7 +60,7 @@ function isFormComplete()
         // mit der funktion trim entfernen wir alle whitespaces am anfang und 
         // am ende eines strings 
         $v = trim($v);
-        if(empty($v) || $v == 'default')
+        if(empty($v) || $v == "no_category")
         {
             return false;
         }

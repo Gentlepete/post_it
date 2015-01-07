@@ -43,7 +43,8 @@ and open the template in the editor.
 <html>
     <head>
         <meta charset="UTF-8">
-        <link rel="stylesheet" href="style.css" type="text/css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css" type="text/css" media="screen">
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script type="text/JavaScript" src="application.js"></script> 
         <title>Post-it</title>
@@ -57,53 +58,53 @@ and open the template in the editor.
             <?php include_once 'head.php'; ?>
             
         </div>
-        
-        <div class="container_element content">    
-            
-                <?php if(isset($_SESSION['logged'])){ ?>
-                    <div class="container_element" id="post_form_div">
-                        <form action="create_post.php" method="post" enctype="multipart/form-data">
-                            <input class="title" name="title" placeholder="Titel" autocomplete="off"><br>
-                            <textarea style="resize: none;width: 30%;" name="message" placeholder="Gib hier Deine Nachricht ein..."></textarea><br>
-                            <label>Bild Hochladen: </label>
-                            <!--<input type="hidden" name="MAX_FILE_SIZE" value="500000" />-->
-                            <input type="file" name="postImg" id="img" accept="image/*" ><br>
-                            <select name="category">
-                                <option value="" disabled selected>Kategorie auswählen</option>
-                                <?php while($cat = $categories->fetch_assoc()){ ?>
-                                   <option value="<?php echo $cat['id']; ?>" ><?php echo $cat['name']; ?></option>
-                                <?php } ?>
-                            </select>
-                            <button type="submit" name="btn_post" value="pressed">Posten</button>
-                        </form>
+        <div class="container_element content">  
+            <?php if($postResult->num_rows == 0){ ?>
+                <h3>Keine Einträge gefunden</h3>  
+            <?php }else{ ?>
+                        <?php if(isset($_SESSION['logged'])){ ?>
+                            <div class="container_element" id="post_form_div">
+                                <form action="create_post.php" method="post" enctype="multipart/form-data">
+                                    <input class="title" name="title" placeholder="Titel" autocomplete="off"><br>
+                                    <textarea style="resize: none;width: 30%;" name="message" placeholder="Gib hier Deine Nachricht ein..."></textarea><br>
+                                    <label>Bild Hochladen: </label>
+                                    <!--<input type="hidden" name="MAX_FILE_SIZE" value="500000" />-->
+                                    <input type="file" name="postImg" id="img" accept="image/*" ><br>
+                                    <select name="category">
+                                        <option value="no_category" selected>Kategorie auswählen</option>
+                                        <?php while($cat = $categories->fetch_assoc()){ ?>
+                                           <option value="<?php echo $cat['id']; ?>" ><?php echo $cat['name']; ?></option>
+                                        <?php } ?>
+                                    </select>
+                                    <button type="submit" name="btn_post" value="pressed">Posten</button>
+                                </form>
+                            </div>
+
+                        <?php } ?>
+
+
+                    <?php while($post = $postResult->fetch_assoc()){ ?>
+
+                    <div class="post">
+                        <hr>
+                        <p>
+                            <a href="user.php?userId=<?php echo $post['user_id']; ?>"><?php echo ucfirst($post['name']); ?></a>
+                            <span class="timeDiff" title="<?php echo date('d.m.Y H:i:s', $post['timestamp']);?>">- <?php echo timeDiff($post['timestamp']);?> - <?php echo $post['category'];?> </span>
+                        </p>
+                        <h2><?php echo $post['title'];?></h2>
+                        <p>
+                            <?php echo $post['message'];?><br>
+                            <?php if($post['img_source']){ ?>
+                                <?php $src = $file_path.$post['img_source']; ?>
+                            <a href="<?php echo $src; ?>"><img src="<?php echo $src; ?>" class="postImage"></a>
+                            <?php } ?>
+                        </p>
                     </div>
-                    
-                <?php } ?>
-           
-        
-            <?php while($post = $postResult->fetch_assoc()){ ?>
-            
-            <div class="post">
-                <hr>
-                <p>
-                    <a href="user.php?userId=<?php echo $post['user_id']; ?>"><?php echo ucfirst($post['name']); ?></a>
-                    <span class="timeDiff" title="<?php echo date('d.m.Y H:i:s', $post['timestamp']);?>">- <?php echo timeDiff($post['timestamp']);?> - <?php echo $post['category'];?> </span>
-                </p>
-                <h2><?php echo $post['title'];?></h2>
-                <p>
-                    <?php echo $post['message'];?><br>
-                    <?php if($post['img_source']){ ?>
-                        <?php $src = $file_path.$post['img_source']; ?>
-                    <a href="<?php echo $src; ?>"><img src="<?php echo $src; ?>" class="postImage"></a>
+
+
                     <?php } ?>
-                </p>
-            </div>
-            
-            
+
             <?php } ?>
         </div>
-        <?php
-        // put your code here
-        ?>
     </body>
 </html>
