@@ -47,7 +47,7 @@ and open the template in the editor.
         <link rel="stylesheet" href="style.css" type="text/css">
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script type="text/JavaScript" src="application.js"></script>
-        <title><?php echo $user['name'] ; ?></title>
+        <title>Profil von <?php echo $user['name'] ; ?></title>
     </head>
     <body>
         <?php include_once 'flash_messages.php'; ?>
@@ -56,49 +56,55 @@ and open the template in the editor.
         </div>
         <!--Div zum Anzeigen oder Bearbeiten von User-Informationen-->
         <div id="user_profile" class="container_element">
-            <a href="<?php echo $avatars_path.$user['avatar_src']; ?>"><img style="float: left;" src="<?php echo $avatars_path.$user['avatar_src']; ?>" width="70px"></a>
-            <h2 style="text-align: center;">Profil von <?php echo ucfirst($user['name']); ?></h2><br> 
+            <div style="float:left;position: relative;">
+                <h2 ><?php echo ucfirst($user['name']); ?></h2>
+                <a href="<?php echo $avatars_path.$user['avatar_src']; ?>">
+                    <img src="<?php echo $avatars_path.$user['avatar_src']; ?>" width="70px">
+                </a>
+            </div>
             
             <!-- Wenn noch keine Einträge oder Bearbeiten geklickt wurde dann Formular zum Erstellen bzw. Bearbeiten der User-Informationen 
                 ansonsten normale ausgabe der User-Informationen -->
-            <?php if((!$user['firstname'] || !$user['lastname'] || !$user['interests'] || isset($_POST['btn_edit_info'])) && $_SESSION['userId'] == $user['id']){ ?>
-                <form action="update_user.php" method="post" enctype="multipart/form-data">
-                    <div style="float: left;margin-right: 20px;">
-                        <label>Vorname: </label><br>
-                        <input name="firstname" value="<?php echo $user['firstname']?>" >
-                    </div>
-                    <div style="">
-                        <label>Nachname: </label><br>
-                        <input name="lastname" value="<?php echo $user['lastname'];?>">
-                    </div>
-                    <div>
-                        <label>Interessen: </label><br>
-                        <textarea style="" name="interests" ><?php echo $user['interests'] ; ?></textarea>
-                    </div>
-                    <div>
-                        <label>Avatar ändern: </label>
-                        <!--<input type="hidden" name="MAX_FILE_SIZE" value="500000" />-->
-                        <input type="file" name="avatarImg" id="img" accept="image/*" ><br>
-                    </div>
-                    <div>
-                        <button type="submit" name="btn_update_user" value="update">Speichern</button>
-                    </div>
-                </form>
-            <?php } else { ?>
-                <p>Vorname: <?php echo $user['firstname']; ?></p><br>
-                <p>Nachname: <?php echo $user['lastname']; ?></p><br>
-                <p>Interessen: <?php echo $user['interests']; ?></p><br>
-                <?php if($_SESSION['userId'] == $user['id']){ ?>
-                <form action="user.php?userId=<?php echo $user['id']; ?>" method="post">
-                    <button type="submit" name="btn_edit_info" value="<?php echo $user['id']; ?>">Bearbeiten</button>
-                </form> 
-                    
-                <?php } ?>
-            <?php } ?> 
+            <div style="margin-left: 30%;">
+                <?php if((!$user['firstname'] || !$user['lastname'] || !$user['interests'] || isset($_POST['btn_edit_info'])) && $_SESSION['userId'] == $user['id']){ ?>
+                    <form  action="update_user.php" method="post" enctype="multipart/form-data">
+                        <div>
+                            <label>Vorname: </label><br>
+                            <input name="firstname" value="<?php echo $user['firstname']?>" >
+                        </div>
+                        <div style="">
+                            <label>Nachname: </label><br>
+                            <input name="lastname" value="<?php echo $user['lastname'];?>">
+                        </div>
+                        <div>
+                            <label>Interessen: </label><br>
+                            <textarea style="" name="interests" ><?php echo $user['interests'] ; ?></textarea>
+                        </div>
+                        <div>
+                            <label>Avatar ändern: </label>
+                            <!--<input type="hidden" name="MAX_FILE_SIZE" value="500000" />-->
+                            <input type="file" name="avatarImg" id="img" accept="image/*" ><br>
+                        </div>
+                        <div>
+                            <button type="submit" name="btn_update_user" value="update">Speichern</button>
+                        </div>
+                    </form>
+                <?php } else { ?>
+                    <p>Vorname: <?php echo $user['firstname']; ?></p><br>
+                    <p>Nachname: <?php echo $user['lastname']; ?></p><br>
+                    <p>Interessen: <?php echo $user['interests']; ?></p><br>
+                    <?php if($_SESSION['userId'] == $user['id']){ ?>
+                    <form action="user.php?userId=<?php echo $user['id']; ?>" method="post">
+                        <button type="submit" name="btn_edit_info" value="<?php echo $user['id']; ?>">Bearbeiten</button>
+                    </form> 
+
+                    <?php } ?>
+                <?php } ?> 
+            </div>
         </div>
         <!--Div zum Anzeigen der Posts des Users. Einzelne Posts können bearbeitet oder gelöscht werden. Beim klick auf bearbeiten wird anstelle der 
             Postausgabe ein formular gerendert. -->
-        <div class="container_element content">
+        <div class="container_element content" style="margin-top: 40px;">
             <?php if($postResult->num_rows == 0){ ?>
                 <h3>Keine Einträge vorhanden</h3>  
             <?php }else{ ?>
@@ -149,7 +155,7 @@ and open the template in the editor.
                             <?php } ?>
 
                         <?php } ?>
-                        <?php $commentsQuery = "SELECT c.id, c.message, c.user_id, UNIX_TIMESTAMP(c.timestamp) AS timestamp, u.name AS username FROM comments c "
+                        <?php $commentsQuery = "SELECT c.id, c.message, c.user_id, UNIX_TIMESTAMP(c.timestamp) AS timestamp, u.name AS username, u.avatar_src AS user_avatar FROM comments c "
                                     . "JOIN posts p ON c.post_id = p.id "
                                     . "JOIN users u ON c.user_id = u.id "
                                     . "WHERE c.post_id = ".$post['id'] ; ?>
@@ -157,21 +163,23 @@ and open the template in the editor.
                         <ul style="margin-top: 10px;">
                             <hr style="color: #e2ecc5;">
                             <?php if($commentsResult->num_rows > 0){ ?>
-                                <input class="comments_link" type="button" value="Kommentare">
+                                <input class="comments_link" type="button" value="<?php echo $commentsResult->num_rows; ?> Kommentar(e)">
                                 <div class="comments">  
                                     <?php while($comment = $commentsResult->fetch_assoc()){ ?>
                                        <li>
-                                           <p>
+                                           <div  style="position: relative;">
                                                 <a href="user.php?userId=<?php echo $comment['user_id']; ?>">
-                                                <?php echo ucfirst($comment['username']); ?>
+                                                    <img class="avatar" src="<?php echo $avatars_path.$comment['user_avatar'];?>" width="60px" >
+                                                    <?php echo ucfirst($comment['username']); ?>
                                                 </a>
                                                 <span class="timeDiff" title="<?php echo date('d.m.Y H:i:s', $comment['timestamp']);?>">
                                                      - <?php echo timeDiff($comment['timestamp']);?>
                                                 </span> 
-                                           </p>
-                                           <p>
-                                               <?php echo $comment['message'];?>
-                                           </p> 
+                                            </div>
+                                            <div>
+                                                <?php echo $comment['message'];?>
+                                            </div> 
+                                            <div style="clear: both;"></div>
                                        </li> 
                                     <?php } ?>   
                                 </div>

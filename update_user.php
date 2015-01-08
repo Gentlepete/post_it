@@ -33,7 +33,7 @@ if(isset($_POST['btn_update_user']))
             unlink($path);
         }
         // Bild komprimieren in /avatars und in dbquery einfügen
-        $image['tmp_name'] = compress($image['tmp_name'], $image['tmp_name'], 75);
+//        $image['tmp_name'] = compress($image['tmp_name'], $image['tmp_name'], 75);
         $folder = "avatars/";
         move_uploaded_file($image['tmp_name'], "$folder".$_SESSION['userId'].$random.$image['name']);
         $insertQuery .= ", avatar_src= '".$_SESSION['userId'].$random.$image['name']."' ";

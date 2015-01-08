@@ -8,7 +8,7 @@ if(isset($_COOKIE['rememberMeToken']) && isset($_COOKIE['rememberMe']) && !isset
     }
 }
 
-$postQuery = "SELECT p.id, p.title, p.message, p.img_source, UNIX_TIMESTAMP(p.timestamp) AS timestamp, u.name, u.id AS user_id, c.name AS category FROM posts p "
+$postQuery = "SELECT p.id, p.title, p.message, p.img_source, UNIX_TIMESTAMP(p.timestamp) AS timestamp, u.name, u.id AS user_id, u.avatar_src AS user_avatar, c.name AS category FROM posts p "
             . "JOIN users u ON p.user_id = u.id "
             . "JOIN categories c ON p.category_id = c.id ";
 
@@ -31,8 +31,8 @@ $categories_search = sendSqlQuery($dbCon, $catQuery);
 $categories = sendSqlQuery($dbCon, $catQuery);
 
 $postResult = sendSqlQuery($dbCon, $postQuery);
-$file_path = 'http://localhost/Post-it/images/';
-
+$image_path = 'http://localhost/Post-it/images/';
+$avatars_path = 'http://localhost/Post-it/avatars/';
 
 ?>
 <!DOCTYPE html>
@@ -51,6 +51,7 @@ and open the template in the editor.
         <title>Post-it</title>
     </head>
     <body>
+        
         <?php include_once 'flash_messages.php'; ?>
         <div id="navigation" class="container_element">
             <?php include_once 'nav.php'; ?>
@@ -89,58 +90,66 @@ and open the template in the editor.
 
                     <div id="<?php echo $post['id']; ?>" class="post">
                         <hr>
-                        <p>
-                            <a href="user.php?userId=<?php echo $post['user_id']; ?>"><?php echo ucfirst($post['name']); ?></a>
+                        <div style="position: relative;">
+                            <a href="user.php?userId=<?php echo $post['user_id']; ?>">
+                                <img class="avatar" src="<?php echo $avatars_path.$post['user_avatar'];?>" width="75px" >
+                                <?php echo ucfirst($post['name']); ?>
+                            </a>
                             <span class="timeDiff" title="<?php echo date('d.m.Y H:i:s', $post['timestamp']);?>">- <?php echo timeDiff($post['timestamp']);?> - <?php echo $post['category'];?> </span>
-                        </p>
-                        <h2 class="post_title"><?php echo $post['title'];?></h2>
-                        <p>
-                            <?php echo $post['message'];?><br>
-                            <?php if($post['img_source']){ ?>
-                                <?php $src = $file_path.$post['img_source']; ?>
-                            <a href="<?php echo $src; ?>"><img src="<?php echo $src; ?>" class="postImage"></a>
-                            <?php } ?>
-                        </p>
-                        <?php $commentsQuery = "SELECT c.id, c.message, c.user_id, UNIX_TIMESTAMP(c.timestamp) AS timestamp, u.name AS username FROM comments c "
-                                . "JOIN posts p ON c.post_id = p.id "
-                                . "JOIN users u ON c.user_id = u.id "
-                                . "WHERE c.post_id = ".$post['id'] ; ?>
-                        <?php $commentsResult = sendSqlQuery($dbCon, $commentsQuery); ?>
-                        <ul style="margin-top: 10px;">
-                            
-                            <?php if($commentsResult->num_rows > 0){ ?>
-                                <hr style="color: #e2ecc5;">
-                                <input class="comments_link" type="button" value="<?php echo $commentsResult->num_rows; ?> Kommentar(e)">
-                                <div class="comments">  
-                                    <?php while($comment = $commentsResult->fetch_assoc()){ ?>
-                                    
-                                       <li>
-                                           <p>
-                                                <a href="user.php?userId=<?php echo $comment['user_id']; ?>">
-                                                <?php echo ucfirst($comment['username']); ?>
-                                                </a>
-                                                <span class="timeDiff" title="<?php echo date('d.m.Y H:i:s', $comment['timestamp']);?>">
-                                                     - <?php echo timeDiff($comment['timestamp']);?>
-                                                </span> 
-                                           </p>
-                                           <p>
-                                               <?php echo $comment['message'];?>
-                                           </p> 
-                                       </li> 
-                                    
-                                    <?php } ?>   
-                                </div>
-                            <?php } ?>
-                            <?php if(isset($_SESSION['logged'])){ ?>
-                                
-                                <form action="comment.php" method="post">
-                                    <input name="post_id" value="<?php echo $post['id']; ?>" hidden>
-                                    <input class="comment" name="comment" placeholder="Kommentieren">
-                                    <input type="submit" name="btn_comment" hidden>
-                                </form> 
-                            <?php } ?>  
-                              
-                        </ul>
+                        </div>
+                        <div style="clear: both;"></div>
+                        <div style="position: relative;">
+                            <h2 class="post_title"><?php echo $post['title'];?></h2>
+                            <p>
+                                <?php echo $post['message'];?><br>
+                                <?php if($post['img_source']){ ?>
+                                    <?php $src = $image_path.$post['img_source']; ?>
+                                <a href="<?php echo $src; ?>"><img src="<?php echo $src; ?>" class="postImage"></a>
+                                <?php } ?>
+                            </p>
+                            <?php $commentsQuery = "SELECT c.id, c.message, c.user_id, UNIX_TIMESTAMP(c.timestamp) AS timestamp, u.name AS username, u.avatar_src AS user_avatar FROM comments c "
+                                    . "JOIN posts p ON c.post_id = p.id "
+                                    . "JOIN users u ON c.user_id = u.id "
+                                    . "WHERE c.post_id = ".$post['id'] ; ?>
+                            <?php $commentsResult = sendSqlQuery($dbCon, $commentsQuery); ?>
+                            <ul style="margin-top: 10px;">
+
+                                <?php if($commentsResult->num_rows > 0){ ?>
+                                    <hr style="color: #e2ecc5;">
+                                    <input class="comments_link" type="button" value="<?php echo $commentsResult->num_rows; ?> Kommentar(e)">
+                                    <div class="comments">  
+                                        <?php while($comment = $commentsResult->fetch_assoc()){ ?>
+
+                                           <li>
+                                               <div  style="position: relative;">
+                                                    <a href="user.php?userId=<?php echo $comment['user_id']; ?>">
+                                                        <img class="avatar" src="<?php echo $avatars_path.$comment['user_avatar'];?>" width="60px" >
+                                                        <?php echo ucfirst($comment['username']); ?>
+                                                    </a>
+                                                    <span class="timeDiff" title="<?php echo date('d.m.Y H:i:s', $comment['timestamp']);?>">
+                                                         - <?php echo timeDiff($comment['timestamp']);?>
+                                                    </span> 
+                                               </div>
+                                               <div>
+                                                   <?php echo $comment['message'];?>
+                                               </div> 
+                                               <div style="clear: both;"></div>
+                                           </li> 
+                                           
+                                        <?php } ?>   
+                                    </div>
+                                <?php } ?>
+                                <?php if(isset($_SESSION['logged'])){ ?>
+
+                                    <form action="comment.php" method="post">
+                                        <input name="post_id" value="<?php echo $post['id']; ?>" hidden>
+                                        <input class="comment" name="comment" placeholder="Kommentieren">
+                                        <input type="submit" name="btn_comment" hidden>
+                                    </form> 
+                                <?php } ?>  
+
+                            </ul>
+                        </div>
                     </div>
 
 
