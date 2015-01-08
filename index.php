@@ -60,14 +60,12 @@ and open the template in the editor.
             
         </div>
         <div class="container_element content">  
-            <?php if($postResult->num_rows == 0){ ?>
-                <h3>Keine Einträge gefunden</h3>  
-            <?php }else{ ?>
+            
                         <?php if(isset($_SESSION['logged'])){ ?>
                             <div class="container_element" id="post_form_div">
                                 <form action="create_post.php" method="post" enctype="multipart/form-data">
                                     <input class="title" name="title" placeholder="Titel" autocomplete="off"><br>
-                                    <textarea style="resize: none;width: 30%;" name="message" placeholder="Gib hier Deine Nachricht ein..."></textarea><br>
+                                    <textarea class="textarea_post" name="message" placeholder="Gib hier Deine Nachricht ein..."></textarea><br>
                                     <label>Bild Hochladen: </label>
                                     <!--<input type="hidden" name="MAX_FILE_SIZE" value="500000" />-->
                                     <input type="file" name="postImg" id="img" accept="image/*" ><br>
@@ -83,10 +81,13 @@ and open the template in the editor.
 
                         <?php } ?>
 
-
+                    <?php if($postResult->num_rows == 0){ ?>
+                        <hr>
+                        <h3>Keine Einträge vorhanden</h3>  
+                    <?php }else{ ?>
                     <?php while($post = $postResult->fetch_assoc()){ ?>
 
-                    <div class="post">
+                    <div id="<?php echo $post['id']; ?>" class="post">
                         <hr>
                         <p>
                             <a href="user.php?userId=<?php echo $post['user_id']; ?>"><?php echo ucfirst($post['name']); ?></a>
@@ -106,10 +107,10 @@ and open the template in the editor.
                                 . "WHERE c.post_id = ".$post['id'] ; ?>
                         <?php $commentsResult = sendSqlQuery($dbCon, $commentsQuery); ?>
                         <ul style="margin-top: 10px;">
-                            <hr style="color: #e2ecc5;">
+                            
                             <?php if($commentsResult->num_rows > 0){ ?>
-                                
-                                <input class="comments_link" type="button" value="Kommentare">
+                                <hr style="color: #e2ecc5;">
+                                <input class="comments_link" type="button" value="<?php echo $commentsResult->num_rows; ?> Kommentar(e)">
                                 <div class="comments">  
                                     <?php while($comment = $commentsResult->fetch_assoc()){ ?>
                                     
@@ -130,11 +131,15 @@ and open the template in the editor.
                                     <?php } ?>   
                                 </div>
                             <?php } ?>
-                            <form action="comment.php" method="post">
-                                <input name="post_id" value="<?php echo $post['id']; ?>" hidden>
-                                <input class="comment" name="comment" placeholder="Kommentieren">
-                                <input type="submit" name="btn_comment" hidden>
-                            </form> 
+                            <?php if(isset($_SESSION['logged'])){ ?>
+                                
+                                <form action="comment.php" method="post">
+                                    <input name="post_id" value="<?php echo $post['id']; ?>" hidden>
+                                    <input class="comment" name="comment" placeholder="Kommentieren">
+                                    <input type="submit" name="btn_comment" hidden>
+                                </form> 
+                            <?php } ?>  
+                              
                         </ul>
                     </div>
 

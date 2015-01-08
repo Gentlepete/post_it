@@ -11,11 +11,11 @@ if(isset($_POST['btn_post'])){
             $cat_id = $dbCon->real_escape_string(htmlspecialchars($_POST['category']));        
             $user_id = $_SESSION['userId'];
             $image = $_FILES['postImg']; 
-            $random = rand(1,100000);
+           
             
             $insertQuery = "INSERT posts VALUES (NULL, '$title', '$message', ";
             $allowed = array("image/jpeg", "image/gif", "image/png", "image/jpg");
-            var_dump($image['type']);
+            
             if(!empty($image['tmp_name']) && in_array($image['type'], $allowed)){
                 $folder = "images/";
                 move_uploaded_file($_FILES['postImg']['tmp_name'], "$folder"."$user_id".$random."$cat_id".$image['name']);

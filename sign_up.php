@@ -19,8 +19,8 @@ if(isset($_POST['btn_send'])){
                $name = $dbCon->real_escape_string(htmlspecialchars($_POST['username']));
                $email = $dbCon->real_escape_string(htmlspecialchars($_POST['email']));
                
-               $sqlQuery = "INSERT users (name, email, password)"
-                       . " VALUES ('$name', '$email', '$password')";
+               $sqlQuery = "INSERT users (name, email,avatar_src , password)"
+                       . " VALUES ('$name', '$email', 'default_app_avatar.png' ,'$password')";
                
                if(sendSqlQuery($dbCon, $sqlQuery)){
                    sendWelcomeMail($email);

@@ -22,5 +22,5 @@ if(isset($_POST['btn_comment'])){
     }
 }
 
-header('Location: '.$_SERVER['HTTP_REFERER']);
+header('Location: '.$_SERVER['HTTP_REFERER']."#$post_id");
 

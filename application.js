@@ -15,6 +15,10 @@ $(document).ready(function(){
    $(".comments_link").click(function(){
        $(this).next("div").slideToggle();
    });
+   
+   if($(".comments").height() <= 200){
+       $(".comments").show();
+   }
       
 });
 

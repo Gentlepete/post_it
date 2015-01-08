@@ -33,6 +33,50 @@ li{
     margin-bottom: 20px;
 }
 
+/*----------------- Formulare und deren Elemente -------------------------------------------- */
+
+
+#post_form{
+    /*box-shadow: 5px 5px 5px #596c24;*/
+    position: fixed;
+    width: 50%;
+    margin-left: 15%;
+    margin-right: auto;
+    top: 10%;
+    /*margin-top: -100px;*/
+    z-index: 2;
+}
+
+#login_form{
+    display: inline-block;
+}
+
+#search_form{
+    float: left;
+    margin-right: 5%;
+    
+}
+
+.textarea_post{
+    width: 30%;
+    resize: none;
+    min-width: 200px;
+}
+
+.title{
+    width: 30%;
+    min-width: 200px;
+}
+
+.comment{
+    width: 30%;
+    min-width: 200px;
+}
+
+
+
+/* -------------------------------------------------------------------------------------------*/
+
 #navigation {
     /*border: 1px solid black;*/
     box-shadow: 3px 3px 3px #596c24;
@@ -74,6 +118,7 @@ li{
     margin-left: 20%;
 /*    margin-right: auto;*/
     margin-top: 40px;
+    margin-bottom: 300px;
     /*height: 2000px;*/    
 }
 
@@ -91,11 +136,24 @@ li{
 
 
 .flash{
-    top: 30px;
+    top: 60px;
     position: fixed;
     z-index: 3;
-    /*box-shadow: 5px 5px 5px #596c24;*/
-    left: 20px;
+    box-shadow: 5px 5px 5px #596c24;
+    left: 20%;
+    
+}
+
+@media screen and (max-width: 680px){
+    .flash{
+       top: 100px;
+    }  
+}
+
+@media screen and (max-width: 430px) {
+    .flash {
+        top: 120px;
+    }
 }
 
 
@@ -110,16 +168,7 @@ li{
     border: 1px solid green;
 }
 
-#post_form{
-    /*box-shadow: 5px 5px 5px #596c24;*/
-    position: fixed;
-    width: 50%;
-    margin-left: 15%;
-    margin-right: auto;
-    top: 10%;
-    /*margin-top: -100px;*/
-    z-index: 2;
-}
+
 
 .timeDiff{
     color: grey;
@@ -133,9 +182,7 @@ li{
     margin-bottom: 10px;
 }
 
-.title{
-    width: 30%;
-}
+
 
 .postImage{
     max-width: 100%;
@@ -160,20 +207,6 @@ li{
     
 }
 
-#search_form{
-    float: left;
-    margin-right: 5%;
-    
-}
-
-#login_form{
-    display: inline-block;
-}
-
-.comment{
-    width: 200px;
-}
-
 .comments{
     display: none;
     background-color: white;
@@ -183,6 +216,7 @@ li{
     margin-left: 0;
     padding-left: 10px;
     width: 50%;
+   
     
 }
 
