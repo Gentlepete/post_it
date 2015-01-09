@@ -51,15 +51,13 @@ and open the template in the editor.
     </head>
     <body>
         <?php include_once 'flash_messages.php'; ?>
-        <div id="navigation" class="container_element">
-            <?php include_once 'nav.php'; ?>
-        </div>
+        <?php include_once 'nav.php'; ?>
         <!--Div zum Anzeigen oder Bearbeiten von User-Informationen-->
         <div id="user_profile" class="container_element">
             <div style="float:left;position: relative;">
                 <h2 ><?php echo ucfirst($user['name']); ?></h2>
                 <a href="<?php echo $avatars_path.$user['avatar_src']; ?>">
-                    <img src="<?php echo $avatars_path.$user['avatar_src']; ?>" width="70px">
+                    <img src="<?php echo $avatars_path.$user['avatar_src']; ?>" width="110px">
                 </a>
             </div>
             
@@ -131,20 +129,22 @@ and open the template in the editor.
                                     <a href="<?php echo $src; ?>"><img src="<?php echo $src; ?>" class="postImage"></a>
                             <?php } ?>
                         <?php }else{ ?>
-
+                                
                             <p>
                                 <span style="color: #596c25;"><?php echo ucfirst($post['name']); ?></span>
                                 <span style="color: grey;">- <?php echo timeDiff($post['timestamp']);?> - <?php echo $post['category'];?></span>
                             </p>
-                            <h2><?php echo $post['title'];?></h2>
-                            <p class="post_message">
-                                <?php echo $post['message'];?><br>
-                                <?php if($post['img_source']){ ?>
-                                    <?php $src = $images_path.$post['img_source']; ?>
-                                    <a href="<?php echo $src; ?>"><img src="<?php echo $src; ?>" class="postImage"></a>
-                                <?php } ?>
-                            </p>
-
+                            <div style="clear: both;"></div>
+                            <div class="post_content">
+                                <h2><?php echo $post['title'];?></h2>
+                                <p class="post_message">
+                                    <?php echo $post['message'];?><br>
+                                    <?php if($post['img_source']){ ?>
+                                        <?php $src = $images_path.$post['img_source']; ?>
+                                        <a href="<?php echo $src; ?>"><img src="<?php echo $src; ?>" class="postImage"></a>
+                                    <?php } ?>
+                                </p>
+                            </div>
                             <?php if($_SESSION['userId'] == $user['id']){ ?>
                             <form style="float: left;" action="user.php?userId=<?php echo $_SESSION['userId']."#".$post['id']; ?>" method="post">
                                     <button type="submit" name="btn_edit_post" value="<?php echo $post['id']; ?>">Bearbeiten</button>

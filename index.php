@@ -53,25 +53,25 @@ and open the template in the editor.
     <body>
         
         <?php include_once 'flash_messages.php'; ?>
-        <div id="navigation" class="container_element">
-            <?php include_once 'nav.php'; ?>
-        </div>
+        <?php include_once 'nav.php'; ?>
         <div id="head_menu" class="container_element">
             <?php include_once 'head.php'; ?>
             
         </div>
-        <div class="container_element content">  
+        <div class="container_element content"> 
+            
+            <!----------- Wenn ein User eingeloggt ist wird ihm hier das Post-Formular angezeigt ------->
             
                         <?php if(isset($_SESSION['logged'])){ ?>
                             <div class="container_element" id="post_form_div">
                                 <form action="create_post.php" method="post" enctype="multipart/form-data">
-                                    <input class="title" name="title" placeholder="Titel" autocomplete="off"><br>
-                                    <textarea class="textarea_post" name="message" placeholder="Gib hier Deine Nachricht ein..."></textarea><br>
+                                    <input class="title" name="title" placeholder="Titel" autocomplete="off" required><br>
+                                    <textarea class="textarea_post" name="message" placeholder="Gib hier Deine Nachricht ein..." required></textarea><br>
                                     <label>Bild Hochladen: </label>
                                     <!--<input type="hidden" name="MAX_FILE_SIZE" value="500000" />-->
                                     <input type="file" name="postImg" id="img" accept="image/*" ><br>
-                                    <select name="category">
-                                        <option value="no_category" selected>Kategorie auswählen</option>
+                                    <select name="category" required>
+                                        <option value="no_category" disabled selected style="display: none;">Kategorie auswählen</option>
                                         <?php while($cat = $categories->fetch_assoc()){ ?>
                                            <option value="<?php echo $cat['id']; ?>" ><?php echo $cat['name']; ?></option>
                                         <?php } ?>
@@ -81,7 +81,7 @@ and open the template in the editor.
                             </div>
 
                         <?php } ?>
-
+            <!----------- Wenn Posts vorhanden sind werden Sie hier mit Hilfe einer Whileschleife alle untereinander angezeigt --------->
                     <?php if($postResult->num_rows == 0){ ?>
                         <hr>
                         <h3>Keine Einträge vorhanden</h3>  
@@ -98,7 +98,7 @@ and open the template in the editor.
                             <span class="timeDiff" title="<?php echo date('d.m.Y H:i:s', $post['timestamp']);?>">- <?php echo timeDiff($post['timestamp']);?> - <?php echo $post['category'];?> </span>
                         </div>
                         <div style="clear: both;"></div>
-                        <div style="position: relative;">
+                        <div class="post_content">
                             <h2 class="post_title"><?php echo $post['title'];?></h2>
                             <p>
                                 <?php echo $post['message'];?><br>

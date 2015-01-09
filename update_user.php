@@ -28,7 +28,7 @@ if(isset($_POST['btn_update_user']))
         
         $oldAvatar = $oldAvatarResult->fetch_assoc();
         
-        if($oldAvatar['src']){
+        if($oldAvatar['src'] && $oldAvatar['src'] != "default_app_avatar.png"){
             $path = "avatars/".$oldAvatar['src'];
             unlink($path);
         }

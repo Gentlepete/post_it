@@ -46,10 +46,7 @@ if(isset($_POST['btn_send'])){
     </head>
     <body>
         <?php include_once 'flash_messages.php'; ?>
-        
-        <div id="navigation" class="container_element">
-           <?php include_once 'nav.php'; ?> 
-        </div>
+        <?php include_once 'nav.php'; ?> 
         <div id="head_menu" class="container_element">
             <h2>Registrierung</h2>
         </div>
